@@ -1,5 +1,6 @@
-// const mongoose = require('mongoose'); // Mongoose for communicating with mongoDB
-// const DataModel=require('./models/data') // Mongoose Model to store Payment Details(go to the file path to see)
+const mongoose = require('mongoose'); // Mongoose for communicating with mongoDB
+const urlModel=require('./models/url') // Mongoose Model to store Payment Details(go to the file path to see)
+const userModel=require('./models/user') // Mongoose Model to store Payment Details(go to the file path to see)
 const request = require('request');
 const express=require('express')
 const bodyParser=require('body-parser')
@@ -10,8 +11,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json());
 app.use(cors())
 
-/* Connect to mongoDB to store payment Details
-const mongodburl="" //Your mongoDB Url
+const mongodburl="mongodb+srv://fanu0925:mongodb_fanu0925RG@cluster0.uvyfcr8.mongodb.net/Github"
 mongoose.connect(mongodburl,{
   useNewUrlParser: true,
   useUnifiedTopology: true
@@ -22,55 +22,95 @@ mongoose.connect(mongodburl,{
 .catch((error) => {
   console.error('MongoDB connection error:', error);
 });
-*/
 
-app.post('/accept-payment',(req,res)=>{
-    const {amount,currency,email,first_name,last_name,phone_number,tx_ref}=req.body
-    var options = {
-        'method': 'POST',
-        'url': 'https://api.chapa.co/v1/transaction/initialize',
-        'headers': {
-          'Authorization': 'CHAPA-AUTH-KEY',//Replace 'CHAPA-AUTH-KEY' with your Chapa Auth Key from https://dashboard.chapa.co/dashboard/profile/api
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          "amount": amount,
-          "currency": currency,
-          "email": email,
-          "first_name": first_name,
-          "last_name": last_name,
-          "phone_number": phone_number,
-          "tx_ref": tx_ref,
-          "return_url": "http://localhost:3000", //Url to Return once payment is completed
-          "customization[title]": "Payment"
-        })
-      
-      };
-      request(options, function (error, response) {
-        if (error){
-            res.json({error:error})
-            return
-        }  
-        res.json({success:response})
+app.post('/checkURL',(req,response)=>{
+  const {uuid}=req.body
+  urlModel.find({short:uuid})
+  .then((res)=>{
+    response.json({result:res})
+  })
+})
 
-        /* Store Payment Details in MongoDB
+app.post('/shortenURL',(req,response)=>{
+  const {long,short,url,user_id}=req.body
         const model={
-            amount:amount,
-            currency:currency,
-            email:email,
-            first_name:first_name,
-            last_name:last_name,
-            phone_number:phone_number,
-            tx_ref:tx_ref,
+            long:long,
+            short:short,
+            url:url,
+            user_id:user_id
         }
-        const data=new DataModel(model)
+        const data=new urlModel(model)
         data.save()
         .then((resp)=>{
-              res.json({dbsuccess:resp})
+              response.json({success:resp})
         }).catch((err)=>{
-              res.json({error:err})
-        })*/
+              response.json({error:err})
       });
+})
+
+app.get('/getURLs/:uid',(req,response)=>{
+  const uid=req.params.uid
+  urlModel.find({user_id:uid})
+  .then((res)=>{
+    response.json({result:res})
+  })
+})
+
+app.post('/deleteURL',(req,response)=>{
+  const {id}=req.body
+  urlModel.findByIdAndDelete(id)
+  .then((res)=>{
+    response.json({result:res})
+  })
+})
+
+app.post('/checkUser',(req,response)=>{
+  const {email}=req.body
+  userModel.find({email:email})
+  .then((res)=>{
+    response.json({result:res})
+  })
+})
+
+app.post('/checkEmail',(req,response)=>{
+  const {email}=req.body
+  userModel.find({email:email})
+  .then((res)=>{
+    response.json({result:res})
+  })
+})
+
+app.post('/checkPassword',(req,response)=>{
+  const {email,password}=req.body
+  userModel.find({email:email,pass:password})
+  .then((res)=>{
+    response.json({result:res})
+  })
+})
+
+app.post('/saveUser',(req,response)=>{
+  const {fname,lname,email,pass}=req.body
+        const model={
+            fname:fname,
+            lname:lname,
+            email:email,
+            pass:pass
+        }
+        const data=new userModel(model)
+        data.save()
+        .then((resp)=>{
+              response.json({success:resp})
+        }).catch((err)=>{
+              response.json({error:err})
+      });
+})
+
+app.get('/getUserData/:uid',(req,response)=>{
+  const {uid}=req.params
+  userModel.find({_id:uid})
+  .then((res)=>{
+    response.json({result:res})
+  })
 })
 
 app.listen(port,()=>{
