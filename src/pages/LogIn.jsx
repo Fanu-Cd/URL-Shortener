@@ -96,7 +96,7 @@ const LogIn = () => {
       emailError: "",
       passError: "",
       error: "",
-      success:""
+      success: "",
     });
   };
 

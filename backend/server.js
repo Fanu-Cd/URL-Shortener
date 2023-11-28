@@ -1,7 +1,6 @@
 const mongoose = require('mongoose'); // Mongoose for communicating with mongoDB
 const urlModel=require('./models/url') // Mongoose Model to store Payment Details(go to the file path to see)
 const userModel=require('./models/user') // Mongoose Model to store Payment Details(go to the file path to see)
-const request = require('request');
 const express=require('express')
 const bodyParser=require('body-parser')
 const port=3001
@@ -11,7 +10,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json());
 app.use(cors())
 
-const mongodburl="mongodb+srv://fanu0925:mongodb_fanu0925RG@cluster0.uvyfcr8.mongodb.net/Github"
+const mongodburl="" //MongoDB URL
 mongoose.connect(mongodburl,{
   useNewUrlParser: true,
   useUnifiedTopology: true

@@ -21,7 +21,7 @@ export const checkURL = (short) => {
     });
 };
 
-export const shortenURL = (longURL,uid) => {
+export const shortenURL = (longURL, uid) => {
   const uuid = generateId();
   return fetch("http://localhost:3001/checkURL", {
     method: "post",
@@ -40,7 +40,7 @@ export const shortenURL = (longURL,uid) => {
             long: longURL,
             short: uuid,
             url: `http://localhost:3000/${uuid}`,
-            user_id:uid
+            user_id: uid,
           }),
         })
           .then((res) => res.json())
@@ -77,7 +77,8 @@ export const deleteURL = (id) => {
     method: "post",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ id: id }),
-  }).then((res)=>res.json())
+  })
+    .then((res) => res.json())
     .then((res) => {
       return { error: false, result: res };
     })

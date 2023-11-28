@@ -26,9 +26,9 @@ const SignUp = () => {
     success: "",
   });
 
-  useEffect(()=>{
-    console.log("status",status)
-  },[status])
+  useEffect(() => {
+    console.log("status", status);
+  }, [status]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -118,7 +118,7 @@ const SignUp = () => {
       passError: "",
       cpassError: "",
       error: "",
-      success:""
+      success: "",
     });
   };
 
